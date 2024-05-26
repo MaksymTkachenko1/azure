@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-  release:
-    types: [created]
 
 jobs:
   build:
@@ -27,22 +25,3 @@ jobs:
         run: |
           docker build -t myContainerRegistryABC987.azurecr.io/myapp:latest .
           docker push myContainerRegistryABC987.azurecr.io/myapp:latest
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Set up Azure Kubernetes Service (AKS)
-        uses: azure/aks-set-context@v1
-        with:
-          resource-group: myResourceGroup
-          cluster-name: myAKSCluster
-
-      - name: Deploy to AKS
-        run: |
-          kubectl apply -f k8s/deployment.yaml
-          kubectl apply -f k8s/service.yaml
